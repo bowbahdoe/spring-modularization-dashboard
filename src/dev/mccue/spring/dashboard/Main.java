@@ -15,13 +15,15 @@ import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) throws Exception {
+        String path = args.length > 0 ? args[0] : "demo";
+
         // Save dependency tree for later
         String depTree;
         {
             int exitCode = new ProcessBuilder(List.of(
                     "./mvnw", /* "-U", */ "dependency:tree", "-DoutputFile=tree.txt" //, "-DoutputType=dot"
             ))
-                    .directory(new File("demo"))
+                    .directory(new File(path))
                     .inheritIO()
                     .start()
                     .waitFor();
@@ -30,7 +32,7 @@ public class Main {
                 System.err.println("Error getting classpath");
                 System.exit(exitCode);
             }
-            depTree = Files.readString(Path.of("demo/tree.txt"));
+            depTree = Files.readString(Path.of(path + "/tree.txt"));
         }
 
         String verboseDepTree;
@@ -38,7 +40,7 @@ public class Main {
             int exitCode = new ProcessBuilder(List.of(
                     "./mvnw", "-Dverbose=true", "dependency:tree", "-DoutputFile=verbose-tree.txt" //, "-DoutputType=dot"
             ))
-                    .directory(new File("demo"))
+                    .directory(new File(path))
                     .inheritIO()
                     .start()
                     .waitFor();
@@ -47,7 +49,7 @@ public class Main {
                 System.err.println("Error getting classpath");
                 System.exit(exitCode);
             }
-            verboseDepTree = Files.readString(Path.of("demo/verbose-tree.txt"));
+            verboseDepTree = Files.readString(Path.of(path + "/verbose-tree.txt"));
         }
 
         // Get the classpath for everything
@@ -55,7 +57,7 @@ public class Main {
             int exitCode = new ProcessBuilder(List.of(
                     "./mvnw", /* "-U", */ "dependency:build-classpath", "-Dmdep.outputFile=cp.txt"
             ))
-                    .directory(new File("demo"))
+                    .directory(new File(path))
                     .inheritIO()
                     .start()
                     .waitFor();
@@ -67,7 +69,7 @@ public class Main {
         }
 
         List<String> classPathEntries = Arrays.asList(
-                Files.readString(Path.of("demo/cp.txt"))
+                Files.readString(Path.of(path + "/cp.txt"))
                         .split(File.pathSeparator)
         );
 
@@ -127,8 +129,8 @@ public class Main {
                     }
 
                     boolean foundModuleInfo = false;
-                    for (var path : paths) {
-                        if (Files.exists(path)) {
+                    for (var p : paths) {
+                        if (Files.exists(p)) {
                             dependencies.set(i, dependency.withModuleInfoStatus(ModuleInfoStatus.FULL_MODULE_INFO));
                             foundModuleInfo = true;
                             break;
@@ -252,7 +254,7 @@ public class Main {
         html.append("<pre id=\"tree\">");
         html.append(depTree);
         html.append("</pre>");
-        html.append("<pre id=\"verbose-tree\">");
+        html.append("<pre style=\"display:none\" id=\"verbose-tree\">");
         html.append(verboseDepTree);
         html.append("</pre>");
         html.append("</span>");
