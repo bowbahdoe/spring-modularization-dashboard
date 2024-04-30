@@ -165,6 +165,11 @@ public class Main {
                                 
                 <p> Given the widespread popularity of Spring, making most everything in this an explicit module
                 is probably a prerequisite for more widespread module system adoption.</p>
+                
+                <p> This is not updated automatically, but that should be relatively easy to do. The GitHub repo is
+                <a style="color:inherit" href="https://github.com/bowbahdoe/spring-modularization-dashboard">here</a>
+                if you have the time and inclination.
+                </p>
                 """.formatted(
                 grouped.get(ModuleInfoStatus.NO_MODULE_INFO).size(),
                 Math.round(grouped.get(ModuleInfoStatus.NO_MODULE_INFO).size() / (double) dependencies.size() * 100) / 100,
