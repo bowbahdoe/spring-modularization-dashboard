@@ -172,11 +172,11 @@ public class Main {
                 </p>
                 """.formatted(
                 grouped.get(ModuleInfoStatus.NO_MODULE_INFO).size(),
-                Math.round(grouped.get(ModuleInfoStatus.NO_MODULE_INFO).size() / (double) dependencies.size() * 100) / 100,
+                Math.round((grouped.get(ModuleInfoStatus.NO_MODULE_INFO).size() / (double) dependencies.size()) * 100) / 100.0,
                 grouped.get(ModuleInfoStatus.AUTOMATIC_MODULE_NAME).size(),
-                Math.round(grouped.get(ModuleInfoStatus.AUTOMATIC_MODULE_NAME).size() / (double) dependencies.size() * 100) / 100,
+                Math.round((grouped.get(ModuleInfoStatus.AUTOMATIC_MODULE_NAME).size() / (double) dependencies.size()) * 100) / 100.0,
                 grouped.get(ModuleInfoStatus.FULL_MODULE_INFO).size(),
-                Math.round(grouped.get(ModuleInfoStatus.FULL_MODULE_INFO).size() / (double) dependencies.size() * 100) / 100
+                Math.round((grouped.get(ModuleInfoStatus.FULL_MODULE_INFO).size() / (double) dependencies.size()) * 100) / 100.0
         ));
         html.append("<hr>");
         html.append("<pre>");
