@@ -209,6 +209,7 @@ public class Main {
 
         System.out.println(depTree);
 
-        Files.writeString(Path.of("index.html"), html.toString());
+        Files.createDirectories(Path.of("site"));
+        Files.writeString(Path.of("site/index.html"), html.toString());
     }
 }
