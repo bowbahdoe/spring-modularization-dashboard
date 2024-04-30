@@ -32,6 +32,24 @@ public class Main {
             }
             depTree = Files.readString(Path.of("demo/tree.txt"));
         }
+
+        String verboseDepTree;
+        {
+            int exitCode = new ProcessBuilder(List.of(
+                    "./mvnw", "-Dverbose=true", "dependency:tree", "-DoutputFile=verbose-tree.txt" //, "-DoutputType=dot"
+            ))
+                    .directory(new File("demo"))
+                    .inheritIO()
+                    .start()
+                    .waitFor();
+
+            if (exitCode != 0) {
+                System.err.println("Error getting classpath");
+                System.exit(exitCode);
+            }
+            verboseDepTree = Files.readString(Path.of("demo/verbose-tree.txt"));
+        }
+
         // Get the classpath for everything
         {
             int exitCode = new ProcessBuilder(List.of(
@@ -178,15 +196,16 @@ public class Main {
                 grouped.get(ModuleInfoStatus.FULL_MODULE_INFO).size(),
                 Math.round((grouped.get(ModuleInfoStatus.FULL_MODULE_INFO).size() / (double) dependencies.size()) * 100)
         ));
-        html.append("<hr>");
-        html.append("<pre>");
-
         BiFunction<String, String, String> link = (text, href) -> "<a style=\"color:inherit\" href=\"" + href + "\">" + text + "</a>";
         Function<String, String> red = s -> "<span style=\"color:#BF616A\">" + s + "</span>";
         Function<String, String> yellow = s -> "<span style=\"color:#EBCB8B\">" + s + "</span>";
         Function<String, String> green = s -> "<span style=\"color:#A3BE8C\">" + s + "</span>";
 
         depTree = depTree.replace("com.example:demo:jar:0.0.1-SNAPSHOT", "");
+        verboseDepTree = verboseDepTree.replace("com.example:demo:jar:0.0.1-SNAPSHOT", "");
+        verboseDepTree = verboseDepTree.replace("- (", "- ");
+        verboseDepTree = verboseDepTree.replaceAll(" - version managed(.+)\n", "\n");
+        verboseDepTree = verboseDepTree.replaceAll(" - omitted for conflict(.+)\n", "\n");
 
         for (var dependency : dependencies) {
             var color = switch (dependency.moduleInfoStatus) {
@@ -195,7 +214,7 @@ public class Main {
                 case FULL_MODULE_INFO -> green;
             };
 
-            depTree = depTree.replaceAll(
+            Function<String, String> processTree = tree -> tree.replaceAll(
                     dependency.groupId + ":" + dependency.artifactId + ":(.+):" + dependency.version + "(.+)\n",
                     color.apply(
                             link.apply(
@@ -204,9 +223,37 @@ public class Main {
                             )
                     )
             );
+
+            depTree = processTree.apply(depTree);
+            verboseDepTree = processTree.apply(verboseDepTree);
         }
 
+        html.append("""
+                <script>
+                   var verbose = false;
+                   function toggleVerbose() {
+                      if (verbose) {
+                          document.getElementById("tree").style = "";
+                          document.getElementById("verbose-tree").style = "display:none";
+                          document.getElementById("verbose-button").innerText = "Toggle Verbose On";
+                          verbose = false;
+                      }
+                      else {
+                          document.getElementById("tree").style = "display:none";
+                          document.getElementById("verbose-tree").style = "";
+                          document.getElementById("verbose-button").innerText = "Toggle Verbose Off";
+                          verbose = true;
+                      }
+                   };
+                </script>
+                <button id="verbose-button" onclick="toggleVerbose()"> Toggle Verbose On </button>
+                """);
+        html.append("<hr>");
+        html.append("<pre id=\"tree\">");
         html.append(depTree);
+        html.append("</pre>");
+        html.append("<pre id=\"verbose-tree\">");
+        html.append(verboseDepTree);
         html.append("</pre>");
         html.append("</span>");
 
