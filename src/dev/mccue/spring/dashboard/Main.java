@@ -155,9 +155,9 @@ public class Main {
         html.append("""
                 <h1> Spring Modularization Dashboard </h1>
                                 
-                <h2 style="color:#BF616A"> No module info: %d (%s)%% </h2>
-                <h2 style="color:#EBCB8B"> Automatic module name: %d (%s)%% </h2>
-                <h2 style="color:#A3BE8C"> Full module info: %d (%s)%% </h2>
+                <h2 style="color:#BF616A"> No module info: %d (%s%%) </h2>
+                <h2 style="color:#EBCB8B"> Automatic module name: %d (%s%%) </h2>
+                <h2 style="color:#A3BE8C"> Full module info: %d (%s%%) </h2>
                                 
                 <p> This page lists the libraries you would get if you went to
                 <a style="color:inherit" href="https://start.spring.io">https://start.spring.io</a>
@@ -172,11 +172,11 @@ public class Main {
                 </p>
                 """.formatted(
                 grouped.get(ModuleInfoStatus.NO_MODULE_INFO).size(),
-                Math.round((grouped.get(ModuleInfoStatus.NO_MODULE_INFO).size() / (double) dependencies.size()) * 100) / 100.0,
+                Math.round((grouped.get(ModuleInfoStatus.NO_MODULE_INFO).size() / (double) dependencies.size()) * 100),
                 grouped.get(ModuleInfoStatus.AUTOMATIC_MODULE_NAME).size(),
-                Math.round((grouped.get(ModuleInfoStatus.AUTOMATIC_MODULE_NAME).size() / (double) dependencies.size()) * 100) / 100.0,
+                Math.round((grouped.get(ModuleInfoStatus.AUTOMATIC_MODULE_NAME).size() / (double) dependencies.size()) * 100),
                 grouped.get(ModuleInfoStatus.FULL_MODULE_INFO).size(),
-                Math.round((grouped.get(ModuleInfoStatus.FULL_MODULE_INFO).size() / (double) dependencies.size()) * 100) / 100.0
+                Math.round((grouped.get(ModuleInfoStatus.FULL_MODULE_INFO).size() / (double) dependencies.size()) * 100)
         ));
         html.append("<hr>");
         html.append("<pre>");
